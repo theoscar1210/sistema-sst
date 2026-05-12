@@ -16,7 +16,14 @@ return new class extends Migration
             $table->string('document_number', 20)->unique();
             $table->string('name', 100);
             $table->string('last_name', 100);
-            $$table->timestamps(); // columnas created_at y update_at automaticas
+            $table->string('area', 100);
+            $table->string('position', 100);
+            $table->string('company', 100);
+            $table->string('phone', 20)->nullable();
+            $table->string('email', 100)->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->timestamps(); // columnas created_at y update_at automaticas
+            $table->softDeletes();
         });
     }
 

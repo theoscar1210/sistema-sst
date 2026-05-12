@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 150);
+            $table->integer('validity_months');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

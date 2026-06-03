@@ -67,6 +67,7 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
+
         $request->validate([
             'document_number' => 'required|max:20|unique:employees,document_number,' . $employee->id,
             'name' => 'required|max:100',

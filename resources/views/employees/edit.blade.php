@@ -29,7 +29,7 @@
                                     Número de documento *
                                 </label>
                                 <input type="text" name="document_number"
-                                    value="" {{ old('document_number', $employee->document_number) }}"
+                                    value="{{ old('document_number', $employee->document_number) }}"
                                     class="w-full border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
                                 @error('document_number')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -58,6 +58,19 @@
                                 @error('last_name')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Área
+                                </label>
+                                <input type="text" name="area"
+                                    value="{{ old('area', $employee->area) }}"
+                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                                @error('area')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+
                             </div>
 
                             <div>

@@ -8,8 +8,30 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth',])->name('dashboard');
+    $totalEmployees      = \App\Models\Employee::count();
+    $totalCertifications = \App\Models\Certification::count();
+    $expired             = \App\Models\Certification::whereDate('expiry_date', '<', now())->count();
+    $expiringSoon        = \App\Models\Certification::whereDate('expiry_date', '>=', now())
+        ->whereDate('expiry_date', '<=', now()->addDays(30))
+        ->count();
+    $active              = \App\Models\Certification::whereDate('expiry_date', '>', now()->addDays(30))->count();
+
+    $recentExpiring = \App\Models\Certification::with(['employee', 'course'])
+        ->whereDate('expiry_date', '>=', now())
+        ->whereDate('expiry_date', '<=', now()->addDays(30))
+        ->orderBy('expiry_date')
+        ->take(5)
+        ->get();
+
+    return view('dashboard', compact(
+        'totalEmployees',
+        'totalCertifications',
+        'expired',
+        'expiringSoon',
+        'active',
+        'recentExpiring'
+    ));
+})->middleware(['auth'])->name('dashboard');
 
 //solo rutas para super admin
 

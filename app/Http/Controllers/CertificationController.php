@@ -19,7 +19,7 @@ class CertificationController extends Controller
             ->orderBy('expiry_date')
             ->paginate(15);
 
-        return view('certifications.index', compact('cerifications'));
+        return view('certifications.index', compact('certifications'));
     }
 
     /**

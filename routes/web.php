@@ -1,49 +1,33 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CertificationController;
+
 
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    $totalEmployees      = \App\Models\Employee::count();
-    $totalCertifications = \App\Models\Certification::count();
-    $expired             = \App\Models\Certification::whereDate('expiry_date', '<', now())->count();
-    $expiringSoon        = \App\Models\Certification::whereDate('expiry_date', '>=', now())
-        ->whereDate('expiry_date', '<=', now()->addDays(30))
-        ->count();
-    $active              = \App\Models\Certification::whereDate('expiry_date', '>', now()->addDays(30))->count();
-
-    $recentExpiring = \App\Models\Certification::with(['employee', 'course'])
-        ->whereDate('expiry_date', '>=', now())
-        ->whereDate('expiry_date', '<=', now()->addDays(30))
-        ->orderBy('expiry_date')
-        ->take(5)
-        ->get();
-
-    return view('dashboard', compact(
-        'totalEmployees',
-        'totalCertifications',
-        'expired',
-        'expiringSoon',
-        'active',
-        'recentExpiring'
-    ));
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 //solo rutas para super admin
 
 Route::middleware(['auth', 'role:super_admin'])->group(function () {
-    Route::resource('users', \App\Http\Controllers\UserController::class);
+    Route::resource('users', UserController::class);
 });
 
 //rutas para super_admin y sst
 Route::middleware(['auth'])->group(function () {
-    Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
-    Route::resource('courses', \App\Http\Controllers\CourseController::class);
-    Route::resource('certifications', \App\Http\Controllers\CertificationController::class);
+    Route::resource('employees', EmployeeController::class);
+    Route::resource('courses', CourseController::class);
+    Route::resource('certifications', CertificationController::class);
 });
 
 Route::middleware('auth')->group(function () {

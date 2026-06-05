@@ -18,6 +18,9 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    const ROLE_SUPER_ADMIN = 'super_admin';
+    const ROLE_SST = 'sst';
     protected $fillable = [
         'name',
         'last_name',

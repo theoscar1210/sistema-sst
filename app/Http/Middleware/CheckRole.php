@@ -19,9 +19,13 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        if (auth()->user()->role !== $role) {
+        $userRole = auth()->user()->role;
+
+        if (is_null($userRole) || $userRole !== $role) {
             abort(403, 'No tienes permiso para acceder a esta sección.');
         }
+
+
         return $next($request);
     }
 }

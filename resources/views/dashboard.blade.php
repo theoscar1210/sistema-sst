@@ -1,119 +1,283 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Dashboard — Sistema SST
-        </h2>
+        <div>
+            <div class="page-breadcrumb">
+                <i class="bi bi-house" style="font-size:11px;"></i>
+                Inicio
+            </div>
+            <h1 class="page-title">Dashboard</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="{{ route('certifications.create') }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i>
+                Nueva certificación
+            </a>
+            <a href="{{ route('employees.create') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-person-plus"></i>
+                Nuevo empleado
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    {{-- Alertas críticas --}}
+    @if($expired > 0)
+    <div class="sst-alert sst-alert-danger" style="margin-bottom:20px;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            <strong>Atención crítica:</strong>
+            {{ $expired }} certificación{{ $expired !== 1 ? 'es' : '' }} ha{{ $expired !== 1 ? 'n' : '' }} vencido.
+            <a href="{{ route('certifications.index') }}?status=expired"
+               style="font-weight:600;text-decoration:underline;margin-left:6px;">
+                Ver ahora →
+            </a>
+        </div>
+    </div>
+    @endif
 
-            <!-- Tarjetas de resumen -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    @if($expiringSoon > 0 && $expired === 0)
+    <div class="sst-alert sst-alert-warning" style="margin-bottom:20px;">
+        <i class="bi bi-clock-fill"></i>
+        <div>
+            <strong>Por vencer:</strong>
+            {{ $expiringSoon }} certificación{{ $expiringSoon !== 1 ? 'es' : '' }}
+            vence{{ $expiringSoon !== 1 ? 'n' : '' }} en los próximos 30 días.
+            <a href="{{ route('certifications.index') }}?status=expiring"
+               style="font-weight:600;text-decoration:underline;margin-left:6px;">
+                Revisar →
+            </a>
+        </div>
+    </div>
+    @endif
 
-                <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-blue-500">
-                    <p class="text-sm text-gray-500">Total Empleados</p>
-                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ $totalEmployees }}</p>
-                </div>
+    {{-- KPI Cards --}}
+    <div class="kpi-grid">
 
-                <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-green-500">
-                    <p class="text-sm text-gray-500">Certificaciones Vigentes</p>
-                    <p class="text-3xl font-bold text-green-600 mt-1">{{ $active }}</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-yellow-500">
-                    <p class="text-sm text-gray-500">Por Vencer (30 días)</p>
-                    <p class="text-3xl font-bold text-yellow-600 mt-1">{{ $expiringSoon }}</p>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm p-5 border-l-4 border-red-500">
-                    <p class="text-sm text-gray-500">Vencidas</p>
-                    <p class="text-3xl font-bold text-red-600 mt-1">{{ $expired }}</p>
-                </div>
-
+        {{-- Total empleados --}}
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#EEF3FF;">
+                <i class="bi bi-people-fill" style="color:#4A55E8;"></i>
             </div>
-
-            <!-- Alerta si hay vencidos -->
-            @if($expired > 0)
-            <div class="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded mb-6">
-                <strong>Atención:</strong> Hay {{ $expired }} certificación(es) vencida(s).
-                <a href="{{ route('certifications.index') }}" class="underline ml-2">Ver todas</a>
+            <div>
+                <div class="kpi-value">{{ $totalEmployees }}</div>
+                <div class="kpi-label">Total empleados</div>
+                <a href="{{ route('employees.index') }}" class="kpi-trend" style="color:var(--primary-600);">
+                    Ver todos <i class="bi bi-arrow-right" style="font-size:10px;"></i>
+                </a>
             </div>
-            @endif
+        </div>
 
-            <!-- Tabla próximas a vencer -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-700">
-                            Certificaciones próximas a vencer
-                        </h3>
-                        <a href="{{ route('certifications.index') }}"
-                            class="text-blue-600 text-sm hover:underline">
-                            Ver todas →
-                        </a>
+        {{-- Vigentes --}}
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#ECFDF5;">
+                <i class="bi bi-shield-fill-check" style="color:#10B981;"></i>
+            </div>
+            <div>
+                <div class="kpi-value" style="color:#065F46;">{{ $active }}</div>
+                <div class="kpi-label">Certificaciones vigentes</div>
+                <span class="kpi-trend up">
+                    <i class="bi bi-check-circle-fill" style="font-size:10px;"></i>
+                    Al día
+                </span>
+            </div>
+        </div>
+
+        {{-- Por vencer --}}
+        <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background:#FFFBEB;">
+                <i class="bi bi-clock-fill" style="color:#F59E0B;"></i>
+            </div>
+            <div>
+                <div class="kpi-value" style="color:#78350F;">{{ $expiringSoon }}</div>
+                <div class="kpi-label">Por vencer (30 días)</div>
+                <a href="{{ route('certifications.index') }}?status=expiring" class="kpi-trend" style="color:#F59E0B;">
+                    Revisar <i class="bi bi-arrow-right" style="font-size:10px;"></i>
+                </a>
+            </div>
+        </div>
+
+        {{-- Vencidas --}}
+        <div class="kpi-card {{ $expired > 0 ? 'kpi-card--alert' : '' }}">
+            <div class="kpi-icon-wrap" style="background:#FEF2F2;">
+                <i class="bi bi-exclamation-triangle-fill" style="color:#EF4444;"></i>
+            </div>
+            <div>
+                <div class="kpi-value" style="color:#991B1B;">{{ $expired }}</div>
+                <div class="kpi-label">Certificaciones vencidas</div>
+                @if($expired > 0)
+                    <a href="{{ route('certifications.index') }}?status=expired" class="kpi-trend down">
+                        <i class="bi bi-arrow-right" style="font-size:10px;"></i>
+                        Atender ahora
+                    </a>
+                @else
+                    <span class="kpi-trend up">
+                        <i class="bi bi-check-circle-fill" style="font-size:10px;"></i>
+                        Sin vencidas
+                    </span>
+                @endif
+            </div>
+        </div>
+
+    </div>
+
+    {{-- Grid principal --}}
+    <div class="dash-grid">
+
+        {{-- Tabla próximas a vencer --}}
+        <div class="table-card">
+            <div class="table-toolbar">
+                <div class="table-toolbar-left">
+                    <div>
+                        <div style="font-size:13.5px;font-weight:600;color:var(--text-primary);">
+                            Próximas a vencer
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">
+                            Certificaciones con vencimiento en los próximos 30 días
+                        </div>
                     </div>
-
-                    @if($recentExpiring->isEmpty())
-                    <p class="text-gray-400 text-sm py-4 text-center">
-                        No hay certificaciones próximas a vencer en los próximos 30 días.
-                    </p>
-                    @else
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">Empleado</th>
-                                <th class="px-4 py-3">Curso</th>
-                                <th class="px-4 py-3">Vence</th>
-                                <th class="px-4 py-3">Días restantes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach($recentExpiring as $cert)
-                            @php
-                            $daysLeft = now()->diffInDays($cert->expiry_date, false);
-                            @endphp
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium">
-                                    {{ $cert->employee->full_name }}
-                                </td>
-                                <td class="px-4 py-3">{{ $cert->course->name }}</td>
-                                <td class="px-4 py-3">
-                                    {{ $cert->expiry_date->format('d/m/Y') }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-medium">
-                                        {{ $daysLeft }} días
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @endif
+                </div>
+                <div class="table-toolbar-right">
+                    <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm">
+                        Ver todas
+                        <i class="bi bi-arrow-right" style="font-size:10px;"></i>
+                    </a>
                 </div>
             </div>
 
-            <!-- Accesos rápidos -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-                <a href="{{ route('employees.create') }}"
-                    class="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition">
-                    <p class="text-blue-600 font-medium text-sm">+ Nuevo Empleado</p>
-                </a>
-                <a href="{{ route('certifications.create') }}"
-                    class="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition">
-                    <p class="text-green-600 font-medium text-sm">+ Nueva Certificación</p>
-                </a>
-                <a href="{{ route('employees.index') }}"
-                    class="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition">
-                    <p class="text-gray-600 font-medium text-sm">Ver Empleados</p>
-                </a>
-                <a href="{{ route('certifications.index') }}"
-                    class="bg-white p-4 rounded-lg shadow-sm text-center hover:shadow-md transition">
-                    <p class="text-gray-600 font-medium text-sm">Ver Certificaciones</p>
-                </a>
+            @if($recentExpiring->isEmpty())
+            <div class="table-empty">
+                <i class="bi bi-shield-fill-check"></i>
+                <p>No hay certificaciones próximas a vencer.</p>
+                <p style="color:var(--success);font-weight:600;margin-top:4px;">¡Todo está al día!</p>
+            </div>
+            @else
+            <table class="sst-table">
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Curso</th>
+                        <th>Vencimiento</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($recentExpiring as $cert)
+                    @php $daysLeft = now()->diffInDays($cert->expiry_date, false); @endphp
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;flex-shrink:0;">
+                                    {{ strtoupper(substr($cert->employee->full_name, 0, 1)) }}
+                                </div>
+                                <span style="font-weight:500;font-size:13.5px;">{{ $cert->employee->full_name }}</span>
+                            </div>
+                        </td>
+                        <td class="text-muted">{{ $cert->course->name }}</td>
+                        <td class="text-muted" style="font-size:13px;">{{ $cert->expiry_date->format('d/m/Y') }}</td>
+                        <td>
+                            @if($daysLeft <= 7)
+                                <span class="badge badge-expired"><span class="dot"></span>{{ $daysLeft }}d</span>
+                            @else
+                                <span class="badge badge-expiring"><span class="dot"></span>{{ $daysLeft }}d</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            @endif
+        </div>
+
+        {{-- Panel lateral --}}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {{-- Acciones rápidas --}}
+            <div class="card" style="padding:20px;">
+                <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:14px;">
+                    Acciones rápidas
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+
+                    <a href="{{ route('employees.create') }}"
+                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                       onmouseover="this.style.background='var(--bg-surface2)'"
+                       onmouseout="this.style.background='transparent'">
+                        <div style="width:36px;height:36px;border-radius:var(--r-md);background:#EEF3FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-person-plus-fill" style="color:#4A55E8;font-size:15px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:500;color:var(--text-primary);">Nuevo empleado</div>
+                            <div style="font-size:11.5px;color:var(--text-muted);">Registrar en el sistema</div>
+                        </div>
+                        <i class="bi bi-chevron-right" style="margin-left:auto;font-size:11px;color:var(--text-muted);"></i>
+                    </a>
+
+                    <a href="{{ route('certifications.create') }}"
+                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                       onmouseover="this.style.background='var(--bg-surface2)'"
+                       onmouseout="this.style.background='transparent'">
+                        <div style="width:36px;height:36px;border-radius:var(--r-md);background:#ECFDF5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-award-fill" style="color:#10B981;font-size:15px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:500;color:var(--text-primary);">Nueva certificación</div>
+                            <div style="font-size:11.5px;color:var(--text-muted);">Registrar certificado</div>
+                        </div>
+                        <i class="bi bi-chevron-right" style="margin-left:auto;font-size:11px;color:var(--text-muted);"></i>
+                    </a>
+
+                    <a href="{{ route('courses.create') }}"
+                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                       onmouseover="this.style.background='var(--bg-surface2)'"
+                       onmouseout="this.style.background='transparent'">
+                        <div style="width:36px;height:36px;border-radius:var(--r-md);background:#FFF7ED;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-book-fill" style="color:#F97316;font-size:15px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:13.5px;font-weight:500;color:var(--text-primary);">Nuevo curso</div>
+                            <div style="font-size:11.5px;color:var(--text-muted);">Agregar al catálogo</div>
+                        </div>
+                        <i class="bi bi-chevron-right" style="margin-left:auto;font-size:11px;color:var(--text-muted);"></i>
+                    </a>
+
+                </div>
+            </div>
+
+            {{-- Resumen de salud --}}
+            <div class="card" style="padding:20px;">
+                <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:14px;">
+                    Estado del sistema
+                </div>
+                @php
+                    $total = max($totalEmployees, 1);
+                    $pct   = $active > 0 ? min(round(($active / max($active + $expiringSoon + $expired, 1)) * 100), 100) : 0;
+                    $barColor = $pct > 80 ? 'var(--success)' : ($pct > 50 ? 'var(--warning)' : 'var(--danger)');
+                @endphp
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                    <span style="font-size:12.5px;color:var(--text-secondary);">Certificaciones vigentes</span>
+                    <span style="font-size:13px;font-weight:600;color:var(--text-primary);">{{ $pct }}%</span>
+                </div>
+                <div style="width:100%;height:6px;background:var(--bg-surface2);border-radius:9999px;overflow:hidden;margin-bottom:14px;">
+                    <div style="height:6px;border-radius:9999px;background:{{ $barColor }};width:{{ $pct }}%;transition:width 0.7s ease;"></div>
+                </div>
+                <div class="stats-mini-grid">
+                    <div style="text-align:center;padding:8px 4px;border-radius:var(--r-md);background:var(--bg-surface2);">
+                        <div style="font-size:1.25rem;font-weight:700;color:var(--success);">{{ $active }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);">Vigentes</div>
+                    </div>
+                    <div style="text-align:center;padding:8px 4px;border-radius:var(--r-md);background:var(--bg-surface2);">
+                        <div style="font-size:1.25rem;font-weight:700;color:var(--warning);">{{ $expiringSoon }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);">Por vencer</div>
+                    </div>
+                    <div style="text-align:center;padding:8px 4px;border-radius:var(--r-md);background:var(--bg-surface2);">
+                        <div style="font-size:1.25rem;font-weight:700;color:var(--danger);">{{ $expired }}</div>
+                        <div style="font-size:11px;color:var(--text-muted);">Vencidas</div>
+                    </div>
+                </div>
             </div>
 
         </div>
+        {{-- / panel lateral --}}
+
     </div>
+
 </x-app-layout>

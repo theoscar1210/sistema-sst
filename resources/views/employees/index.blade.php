@@ -1,134 +1,178 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div>
+            <div class="page-breadcrumb">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
                 Empleados
-
-            </h2>
-            <a href="{{ route('employees.create') }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                + Nuevo Empleado
-            </a>
+            </div>
+            <h1 class="page-title">Empleados</h1>
         </div>
+        <a href="{{ route('employees.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i>
+            Nuevo empleado
+        </a>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    @if(session('success'))
+    <div class="sst-alert sst-alert-success" style="margin-bottom:20px;"
+         x-data x-init="setTimeout(() => $el.style.display='none', 4000)">
+        <i class="bi bi-check-circle-fill"></i>
+        {{ session('success') }}
+    </div>
+    @endif
 
-            @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success')}}
+    {{-- Barra de filtros --}}
+    <form method="GET" action="{{ route('employees.index') }}" class="filter-bar">
+        <div class="search-wrap" style="flex:1;min-width:200px;max-width:280px;">
+            <i class="bi bi-search"></i>
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Nombre, documento, empresa..."
+                class="sst-input"
+            >
+        </div>
+        <input
+            type="text"
+            name="area"
+            value="{{ request('area') }}"
+            placeholder="Filtrar por área..."
+            class="sst-input"
+            style="min-width:140px;max-width:180px;flex:1;"
+        >
+        <select name="status" class="sst-input" style="min-width:140px;max-width:180px;flex:1;">
+            <option value="">Todos los estados</option>
+            <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Activos</option>
+            <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactivos</option>
+        </select>
+        <div style="display:flex;gap:8px;">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-search"></i>
+                Buscar
+            </button>
+            <a href="{{ route('employees.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-x-lg"></i>
+                Limpiar
+            </a>
+        </div>
+    </form>
+
+    {{-- Tabla --}}
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="table-toolbar-left">
+                <span style="font-size:13px;color:var(--text-secondary);">
+                    <strong style="color:var(--text-primary);">{{ $employees->total() }}</strong>
+                    empleados encontrados
+                </span>
+                @if(request()->hasAny(['search','area','status']))
+                <a href="{{ route('employees.index') }}" class="btn btn-ghost btn-xs" style="color:var(--text-muted);">
+                    <i class="bi bi-x"></i>
+                    Limpiar filtros
+                </a>
+                @endif
             </div>
-            @endif
-
-            {{-- Formulario de Busqueda --}}
-            <form method="GET" action="{{ route('employees.index') }}" class="mb-4">
-                <div class="grid grid-cols-1 md:gird-cols-4 gap-3">
-                    <input type="text"
-                        name="search"
-                        value="{{ request('serach') }}"
-                        placeholder="Nombre, documento, empresa..."
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                    <input type="text"
-                        name="area"
-                        value="{{request('area') }}"
-                        placeholder="Filtrar por área..."
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                    <select name="status"
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                        <option value="">Todos los estados</option>
-                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Activos</option>
-                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactivos</option>
-                    </select>
-                    <div class="flex gap-2">
-                        <button type="submit"
-                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 flex-1">
-                            Buscar
-                        </button>
-                        <a href="{{ route('employees.index') }}"
-                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 flex-1 text-center">
-                            Limpiar
-                        </a>
-                    </div>
-                </div>
-
-            </form>
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">Documento</th>
-                                <th class="px-4 py-3">Nombre completo</th>
-                                <th class="px-4 py-3">Área</th>
-                                <th class="px-4 py-3">Cargo</th>
-                                <th class="px-4 py-3">Empresa</th>
-                                <th class="px-4 py-3">Estado</th>
-                                <th class="px-4 py-3">Acciones</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody class="divide-y divide-gray-200">
-                            @forelse($employees as $employee)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3">{{ $employee->document_number }}</td>
-                                <td class="px-4 py-3">{{ $employee->full_name }}</td>
-                                <td class="px-4 py-3">{{ $employee->area }}</td>
-                                <td class="px-4 py-3">{{ $employee->position }}</td>
-                                <td class="px-4 py-3">{{ $employee->company }}</td>
-                                <td class="px-4 py-3">
-                                    @if($employee->is_active)
-                                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Activo</span>
-                                    @else
-                                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs">Inactivo</span>
-                                    @endif
-                                </td>
-
-                                <td class="px-4 py-3 flex gap-2">
-                                    <a href="{{ route('employees.edit', $employee) }}"
-                                        class=" bg-yellow-400 text-white px-3 py-1 rounded text-xs hover:bg-yellow-500">
-                                        Editar
-                                    </a>
-
-                                    <form action="{{ route('employees.destroy', $employee) }}" method="POST"
-                                        onsubmit="return confirm('¿Estás seguro de eliminar este empleado?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
-                                            Eliminar
-                                        </button>
-                                    </form>
-                                </td>
-
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="px-4 py-6 text-center text-gray-400">
-                                    No hay empleados registrados.
-                                </td>
-                            </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                    <div class="mt-4">
-                        {{ $employees->links() }}
-                    </div>
-
-                </div>
-            </div>
-
         </div>
 
+        <table class="sst-table">
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Documento</th>
+                    <th>Área · Cargo</th>
+                    <th>Empresa</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($employees as $employee)
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:var(--primary-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">
+                                {{ strtoupper(substr($employee->full_name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight:500;font-size:13.5px;color:var(--text-primary);">
+                                    {{ $employee->full_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-family:monospace;font-size:12.5px;color:var(--text-secondary);letter-spacing:0.02em;">
+                            {{ $employee->document_number }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="font-size:13.5px;color:var(--text-primary);">{{ $employee->area }}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">{{ $employee->position }}</div>
+                    </td>
+                    <td class="text-muted">{{ $employee->company }}</td>
+                    <td>
+                        @if($employee->is_active)
+                            <span class="badge badge-active">
+                                <span class="dot"></span>Activo
+                            </span>
+                        @else
+                            <span class="badge badge-inactive">
+                                <span class="dot"></span>Inactivo
+                            </span>
+                        @endif
+                    </td>
+                    <td>
+                        <div class="td-actions">
+                            <a href="{{ route('employees.edit', $employee) }}"
+                               class="btn btn-ghost btn-xs"
+                               data-tooltip="Editar empleado">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </a>
+                            <form action="{{ route('employees.destroy', $employee) }}" method="POST"
+                                  onsubmit="return confirm('¿Confirmar eliminación de {{ addslashes($employee->full_name) }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="btn btn-ghost btn-xs"
+                                        style="color:var(--danger);"
+                                        data-tooltip="Eliminar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6">
+                        <div class="table-empty">
+                            <i class="bi bi-people"></i>
+                            <p>No se encontraron empleados.</p>
+                            @if(request()->hasAny(['search','area','status']))
+                                <a href="{{ route('employees.index') }}" class="btn btn-secondary btn-sm" style="margin-top:12px;">
+                                    Limpiar filtros
+                                </a>
+                            @else
+                                <a href="{{ route('employees.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Registrar primer empleado
+                                </a>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div class="table-footer">
+            <div class="pagination-wrapper" style="flex:1;">
+                {{ $employees->links() }}
+            </div>
+        </div>
     </div>
-
-
-
 
 </x-app-layout>

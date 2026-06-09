@@ -1,92 +1,127 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Usuarios del Sistema
-            </h2>
-            <a href="{{ route('users.create') }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                + Nuevo Usuario
-            </a>
+        <div>
+            <div class="page-breadcrumb">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+                Usuarios
+            </div>
+            <h1 class="page-title">Usuarios del sistema</h1>
         </div>
+        <a href="{{ route('users.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i>
+            Nuevo usuario
+        </a>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    @if(session('success'))
+    <div class="sst-alert sst-alert-success" style="margin-bottom:20px;"
+         x-data x-init="setTimeout(() => $el.style.display='none', 4000)">
+        <i class="bi bi-check-circle-fill"></i>
+        {{ session('success') }}
+    </div>
+    @endif
 
-            @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
+    @if(session('error'))
+    <div class="sst-alert sst-alert-danger" style="margin-bottom:20px;"
+         x-data x-init="setTimeout(() => $el.style.display='none', 5000)">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ session('error') }}
+    </div>
+    @endif
+
+    {{-- Tabla --}}
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="table-toolbar-left">
+                <span style="font-size:13px;color:var(--text-secondary);">
+                    <strong style="color:var(--text-primary);">{{ $users->total() }}</strong>
+                    usuarios registrados
+                </span>
             </div>
-            @endif
+        </div>
 
-            @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') }}
-            </div>
-            @endif
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">Nombre completo</th>
-                                <th class="px-4 py-3">Correo</th>
-                                <th class="px-4 py-3">Rol</th>
-                                <th class="px-4 py-3">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @forelse($users as $user)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium">
+        <table class="sst-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Correo electrónico</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($users as $user)
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:32px;height:32px;border-radius:50%;background:{{ $user->role === 'super_admin' ? '#F3E8FF' : 'var(--primary-50)' }};color:{{ $user->role === 'super_admin' ? '#7E22CE' : 'var(--primary-700)' }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div style="font-weight:500;font-size:13.5px;color:var(--text-primary);">
                                     {{ $user->name }} {{ $user->last_name }}
-                                </td>
-                                <td class="px-4 py-3">{{ $user->email }}</td>
-                                <td class="px-4 py-3">
-                                    @if($user->role === 'super_admin')
-                                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium">
-                                        Super Admin
-                                    </span>
-                                    @else
-                                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
-                                        SST
-                                    </span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-3 flex gap-2">
-                                    <a href="{{ route('users.edit', $user) }}"
-                                        class="bg-yellow-400 text-white px-3 py-1 rounded text-xs hover:bg-yellow-500">
-                                        Editar
-                                    </a>
-                                    @if($user->id !== auth()->id())
-                                    <form action="{{ route('users.destroy', $user) }}" method="POST"
-                                        onsubmit="return confirm('¿Eliminar este usuario?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
-                                            Eliminar
-                                        </button>
-                                    </form>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="px-4 py-6 text-center text-gray-400">
-                                    No hay usuarios registrados.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    <div class="mt-4">
-                        {{ $users->links() }}
-                    </div>
-                </div>
+                                </div>
+                                @if($user->id === auth()->id())
+                                <div style="font-size:11px;color:var(--primary-600);margin-top:1px;">Tú</div>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-muted" style="font-size:13px;">{{ $user->email }}</td>
+                    <td>
+                        @if($user->role === 'super_admin')
+                            <span class="badge" style="background:#F3E8FF;color:#6B21A8;border-color:#D8B4FE;">
+                                <span class="dot"></span>Super Admin
+                            </span>
+                        @else
+                            <span class="badge badge-pending">
+                                <span class="dot"></span>SST
+                            </span>
+                        @endif
+                    </td>
+                    <td>
+                        <div class="td-actions">
+                            <a href="{{ route('users.edit', $user) }}"
+                               class="btn btn-ghost btn-xs"
+                               data-tooltip="Editar usuario">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </a>
+                            @if($user->id !== auth()->id())
+                            <form action="{{ route('users.destroy', $user) }}" method="POST"
+                                  onsubmit="return confirm('¿Eliminar usuario {{ addslashes($user->name) }}?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="btn btn-ghost btn-xs"
+                                        style="color:var(--danger);"
+                                        data-tooltip="Eliminar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4">
+                        <div class="table-empty">
+                            <i class="bi bi-person-fill-gear"></i>
+                            <p>No hay usuarios registrados.</p>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        <div class="table-footer">
+            <div class="pagination-wrapper" style="flex:1;">
+                {{ $users->links() }}
             </div>
         </div>
     </div>
+
 </x-app-layout>

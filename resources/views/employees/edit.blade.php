@@ -1,161 +1,141 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class=" font-semibold text-xl text-gray-800 leading-tight">
-                Editar Empleado
-            </h2>
-
-            <a href="{{ route('employees.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                Volver
-            </a>
+        <div>
+            <div class="page-breadcrumb">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+                <a href="{{ route('employees.index') }}">Empleados</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+                Editar
+            </div>
+            <h1 class="page-title">Editar empleado</h1>
         </div>
-
-
+        <a href="{{ route('employees.index') }}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i>
+            Volver
+        </a>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('employees.update', $employee) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+    <form action="{{ route('employees.update', $employee) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-                        <div class="grid grid-cols-2 gap-4">
+        <div class="form-section">
+            <div class="form-section-header">
+                <i class="bi bi-person-vcard-fill" style="color:var(--primary-600);"></i>
+                <span class="form-section-title">Información personal</span>
+            </div>
+            <div class="form-section-body">
+                <div class="form-grid-2">
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Número de documento *
-                                </label>
-                                <input type="text" name="document_number"
-                                    value="{{ old('document_number', $employee->document_number) }}"
-                                    class="w-full border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('document_number')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Número de documento <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="document_number"
+                               value="{{ old('document_number', $employee->document_number) }}"
+                               class="sst-input {{ $errors->has('document_number') ? 'error' : '' }}">
+                        @error('document_number')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Nombres *
-                                </label>
-                                <input type="text" name="name"
-                                    value="{{ old('name', $employee->name) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('name')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Nombres <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="name"
+                               value="{{ old('name', $employee->name) }}"
+                               class="sst-input {{ $errors->has('name') ? 'error' : '' }}">
+                        @error('name')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Apellidos *
-                                </label>
-                                <input type="text" name="last_name"
-                                    value="{{ old('last_name', $employee->last_name) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('last_name')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Apellidos <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="last_name"
+                               value="{{ old('last_name', $employee->last_name) }}"
+                               class="sst-input {{ $errors->has('last_name') ? 'error' : '' }}">
+                        @error('last_name')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Área
-                                </label>
-                                <input type="text" name="area"
-                                    value="{{ old('area', $employee->area) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('area')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                    <div class="form-group">
+                        <label class="input-label">Correo electrónico</label>
+                        <input type="email" name="email"
+                               value="{{ old('email', $employee->email) }}"
+                               class="sst-input {{ $errors->has('email') ? 'error' : '' }}">
+                        @error('email')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Teléfono</label>
+                        <input type="text" name="phone"
+                               value="{{ old('phone', $employee->phone) }}"
+                               class="sst-input">
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Cargo *
-                                </label>
-                                <input type="text" name="position"
-                                    value="{{ old('position', $employee->position) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('position')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Empresa *
-                                </label>
-                                <input type="text" name="company"
-                                    value="{{ old('company', $employee->company) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('company')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Teléfono
-                                </label>
-                                <input type="text" name="phone"
-                                    value="{{ old('phone', $employee->phone) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('phone')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Correo electrónico
-                                </label>
-                                <input type="email" name="email"
-                                    value="{{ old('email', $employee->email) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('email')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Estado
-                                </label>
-                                <select name="is_active"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="1" {{ $employee->is_active ? 'selected' : '' }}>Activo</option>
-                                    <option value="0" {{ !$employee->is_active ? 'selected' : '' }}>Inactivo</option>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <div class="mt-6 flex justify-end">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                                Actualizar Empleado
-                            </button>
-                        </div>
-
-
-
-
-
-
-                    </form>
+                    <div class="form-group">
+                        <label class="input-label">Estado</label>
+                        <select name="is_active" class="sst-input">
+                            <option value="1" {{ old('is_active', $employee->is_active) ? 'selected' : '' }}>Activo</option>
+                            <option value="0" {{ !old('is_active', $employee->is_active) ? 'selected' : '' }}>Inactivo</option>
+                        </select>
+                    </div>
 
                 </div>
             </div>
-
         </div>
 
-    </div>
+        <div class="form-section">
+            <div class="form-section-header">
+                <i class="bi bi-building-fill" style="color:var(--primary-600);"></i>
+                <span class="form-section-title">Información laboral</span>
+            </div>
+            <div class="form-section-body">
+                <div class="form-grid-2">
 
+                    <div class="form-group">
+                        <label class="input-label">Área <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="area"
+                               value="{{ old('area', $employee->area) }}"
+                               class="sst-input {{ $errors->has('area') ? 'error' : '' }}">
+                        @error('area')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
+                    <div class="form-group">
+                        <label class="input-label">Cargo <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="position"
+                               value="{{ old('position', $employee->position) }}"
+                               class="sst-input {{ $errors->has('position') ? 'error' : '' }}">
+                        @error('position')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
+                    <div class="form-group">
+                        <label class="input-label">Empresa <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="company"
+                               value="{{ old('company', $employee->company) }}"
+                               class="sst-input {{ $errors->has('company') ? 'error' : '' }}">
+                        @error('company')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-footer">
+                <a href="{{ route('employees.index') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-floppy-fill"></i>
+                    Actualizar empleado
+                </button>
+            </div>
+        </div>
+
+    </form>
 
 </x-app-layout>

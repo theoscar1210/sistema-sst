@@ -1,149 +1,192 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <div>
+            <div class="page-breadcrumb">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
                 Certificaciones
-            </h2>
-            <div class="flex gap-2">
-                <a href="{{ route('certifications.export.excel') }}"
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
-                    Exportar Excel
-                </a>
-                <a href="{{ route('certifications.export.pdf') }}"
-                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">
-                    Exportar PDF
-                </a>
-                <a href="{{ route('certifications.create') }}"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-                    + Nueva Certificación
-                </a>
             </div>
+            <h1 class="page-title">Certificaciones</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <a href="{{ route('certifications.export.excel') }}"
+               class="btn btn-secondary btn-sm"
+               data-tooltip="Exportar a Excel">
+                <i class="bi bi-file-earmark-excel" style="color:#16A34A;"></i>
+                Excel
+            </a>
+            <a href="{{ route('certifications.export.pdf') }}"
+               class="btn btn-secondary btn-sm"
+               data-tooltip="Exportar a PDF">
+                <i class="bi bi-file-earmark-pdf" style="color:#DC2626;"></i>
+                PDF
+            </a>
+            <a href="{{ route('certifications.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Nueva certificación
+            </a>
         </div>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    @if(session('success'))
+    <div class="sst-alert sst-alert-success" style="margin-bottom:20px;"
+         x-data x-init="setTimeout(() => $el.style.display='none', 4000)">
+        <i class="bi bi-check-circle-fill"></i>
+        {{ session('success') }}
+    </div>
+    @endif
 
-            @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
+    {{-- Barra de filtros --}}
+    <form method="GET" action="{{ route('certifications.index') }}" class="filter-bar">
+        <div class="search-wrap" style="flex:1;min-width:200px;max-width:280px;">
+            <i class="bi bi-search"></i>
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Nombre o documento del empleado..."
+                class="sst-input"
+            >
+        </div>
+        <select name="course_id" class="sst-input" style="min-width:160px;max-width:220px;flex:1;">
+            <option value="">Todos los cursos</option>
+            @foreach($courses as $course)
+            <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                {{ $course->name }}
+            </option>
+            @endforeach
+        </select>
+        <select name="status" class="sst-input" style="min-width:140px;max-width:180px;flex:1;">
+            <option value="">Todos los estados</option>
+            <option value="expired"  {{ request('status') === 'expired'  ? 'selected' : '' }}>Vencidos</option>
+            <option value="expiring" {{ request('status') === 'expiring' ? 'selected' : '' }}>Por vencer</option>
+            <option value="active"   {{ request('status') === 'active'   ? 'selected' : '' }}>Vigentes</option>
+        </select>
+        <div style="display:flex;gap:8px;">
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-search"></i>
+                Buscar
+            </button>
+            <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-x-lg"></i>
+                Limpiar
+            </a>
+        </div>
+    </form>
+
+    {{-- Tabla --}}
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="table-toolbar-left">
+                <span style="font-size:13px;color:var(--text-secondary);">
+                    <strong style="color:var(--text-primary);">{{ $certifications->total() }}</strong>
+                    certificaciones encontradas
+                </span>
+                @if(request()->hasAny(['search','course_id','status']))
+                <a href="{{ route('certifications.index') }}" class="btn btn-ghost btn-xs" style="color:var(--text-muted);">
+                    <i class="bi bi-x"></i>
+                    Limpiar filtros
+                </a>
+                @endif
             </div>
-            @endif
+        </div>
 
-            {{-- Fornulario de Busqueda --}}
-            <form method="GET" action="{{ route('certifications.index') }}" class="mb-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Nombre o documento del empleado..."
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+        <table class="sst-table">
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Curso</th>
+                    <th>Instituto</th>
+                    <th>Emisión</th>
+                    <th>Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($certifications as $certification)
+                @php $daysLeft = now()->diffInDays($certification->expiry_date, false); @endphp
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;flex-shrink:0;">
+                                {{ strtoupper(substr($certification->employee->full_name, 0, 1)) }}
+                            </div>
+                            <span style="font-weight:500;font-size:13.5px;">
+                                {{ $certification->employee->full_name }}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="text-muted">{{ $certification->course->name }}</td>
+                    <td class="text-muted" style="font-size:13px;">{{ $certification->institute }}</td>
+                    <td style="font-size:13px;color:var(--text-secondary);">
+                        {{ $certification->issue_date->format('d/m/Y') }}
+                    </td>
+                    <td>
+                        <span style="font-size:13px;{{ $daysLeft < 0 ? 'color:var(--danger);font-weight:500;' : 'color:var(--text-secondary);' }}">
+                            {{ $certification->expiry_date->format('d/m/Y') }}
+                        </span>
+                    </td>
+                    <td>
+                        @if($daysLeft < 0)
+                            <span class="badge badge-expired"><span class="dot"></span>Vencido</span>
+                        @elseif($daysLeft <= 30)
+                            <span class="badge badge-expiring"><span class="dot"></span>{{ $daysLeft }}d</span>
+                        @else
+                            <span class="badge badge-vigente"><span class="dot"></span>Vigente</span>
+                        @endif
+                    </td>
+                    <td>
+                        <div class="td-actions">
+                            <a href="{{ route('certifications.edit', $certification) }}"
+                               class="btn btn-ghost btn-xs"
+                               data-tooltip="Editar">
+                                <i class="bi bi-pencil"></i>
+                                Editar
+                            </a>
+                            <form action="{{ route('certifications.destroy', $certification) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('¿Eliminar esta certificación?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="btn btn-ghost btn-xs"
+                                        style="color:var(--danger);"
+                                        data-tooltip="Eliminar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="7">
+                        <div class="table-empty">
+                            <i class="bi bi-award"></i>
+                            <p>No se encontraron certificaciones.</p>
+                            @if(request()->hasAny(['search','course_id','status']))
+                                <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm" style="margin-top:12px;">
+                                    Limpiar filtros
+                                </a>
+                            @else
+                                <a href="{{ route('certifications.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Nueva certificación
+                                </a>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-                    <select name="course_id"
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                        <option value="">Todos lo cursos </option>
-                        @foreach($courses as $course)
-                        <option value="{{ $course->id }}"
-                            {{ request('course_id') == $course->id ? 'selected' : '' }}>
-                            {{ $course->name }}
-                        </option>
-                        @endforeach
-                    </select>
-
-                    <select name="status"
-                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                        <option value="">Todos los estados</option>
-                        <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Vencidos</option>
-                        <option value="expiring" {{ request('satust') === 'expiring' ? 'selected' : '' }}>Por vencer</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : ''}}>VIgentes</option>
-                    </select>
-
-                    <div class="flex gap-2">
-                        <button type="submit"
-                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 flex-1">
-                            Buscar
-                        </button>
-                        <a href="{{ route('certifications.index') }}"
-                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 flex-1 text-center">Limpiar</a>
-                    </div>
-
-
-                </div>
-            </form>
-
-            <div class=" bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3">Empleado</th>
-                                <th class="px-4 py-3">Curso</th>
-                                <th class="px-4 py-3">Instituto</th>
-                                <th class="px-4 py-3">Fecha emisión</th>
-                                <th class="px-4 py-3">Fecha vencimiento</th>
-                                <th class="px-4 py-3">Estado</th>
-                                <th class="px-4 py-3">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @forelse($certifications as $certification)
-                            @php
-                            $daysLeft = now()->diffInDays($certification->expiry_date, false);
-                            @endphp
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-4 py-3 font-medium">
-                                    {{ $certification->employee->full_name }}
-                                </td>
-                                <td class="px-4 py-3">{{ $certification->course->name }}</td>
-                                <td class="px-4 py-3">{{ $certification->institute }}</td>
-                                <td class="px-4 py-3">{{ $certification->issue_date->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3">{{ $certification->expiry_date->format('d/m/Y') }}</td>
-                                <td class="px-4 py-3">
-                                    @if($daysLeft < 0)
-                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">
-                                        Vencido
-                                        </span>
-                                        @elseif($daysLeft <= 30)
-                                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-medium">
-                                            Por vencer ({{ $daysLeft }} días)
-                                            </span>
-                                            @else
-                                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
-                                                Vigente
-                                            </span>
-                                            @endif
-                                </td>
-                                <td class="px-4 py-3 flex gap-2">
-                                    <a href="{{ route('certifications.edit', $certification) }}"
-                                        class="bg-yellow-400 text-white px-3 py-1 rounded text-xs hover:bg-yellow-500">
-                                        Editar
-                                    </a>
-                                    <form action="{{ route('certifications.destroy', $certification) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('¿Eliminar esta certificación?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">
-                                            Eliminar
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="px-4 py-6 text-center text-gray-400">
-                                    No hay certificaciones registradas.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                    <div class="mt-4">
-                        {{ $certifications->links() }}
-                    </div>
-                </div>
+        <div class="table-footer">
+            <div class="pagination-wrapper" style="flex:1;">
+                {{ $certifications->links() }}
             </div>
         </div>
     </div>
+
 </x-app-layout>

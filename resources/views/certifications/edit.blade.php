@@ -1,122 +1,117 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Editar Certificación
-            </h2>
-            <a href="{{ route('certifications.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                Volver
-            </a>
+        <div>
+            <div class="page-breadcrumb">
+                <a href="{{ route('dashboard') }}">Inicio</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+                <a href="{{ route('certifications.index') }}">Certificaciones</a>
+                <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+                Editar
+            </div>
+            <h1 class="page-title">Editar certificación</h1>
         </div>
+        <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i>
+            Volver
+        </a>
     </x-slot>
 
-    <div class="py-6">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form action="{{ route('certifications.update', $certification) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+    <div style="max-width:720px;">
+        <form action="{{ route('certifications.update', $certification) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-                        <div class="grid grid-cols-2 gap-4">
+            <div class="form-section">
+                <div class="form-section-header">
+                    <i class="bi bi-award-fill" style="color:var(--primary-600);"></i>
+                    <span class="form-section-title">Datos de la certificación</span>
+                </div>
+                <div class="form-section-body">
 
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Empleado *
-                                </label>
-                                <select name="employee_id"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="">-- Selecciona un empleado --</option>
-                                    @foreach($employees as $employee)
-                                    <option value="{{ $employee->id }}"
-                                        {{ old('employee_id', $certification->employee_id) == $employee->id ? 'selected' : '' }}>
-                                        {{ $employee->full_name }} — {{ $employee->document_number }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                                @error('employee_id')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Empleado <span style="color:var(--danger);">*</span></label>
+                        <select name="employee_id"
+                                class="sst-input {{ $errors->has('employee_id') ? 'error' : '' }}">
+                            <option value="">— Selecciona un empleado —</option>
+                            @foreach($employees as $employee)
+                            <option value="{{ $employee->id }}"
+                                {{ old('employee_id', $certification->employee_id) == $employee->id ? 'selected' : '' }}>
+                                {{ $employee->full_name }} · {{ $employee->document_number }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('employee_id')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Curso *
-                                </label>
-                                <select name="course_id"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="">-- Selecciona un curso --</option>
-                                    @foreach($courses as $course)
-                                    <option value="{{ $course->id }}"
-                                        {{ old('course_id', $certification->course_id) == $course->id ? 'selected' : '' }}>
-                                        {{ $course->name }} ({{ $course->validity_months }} meses)
-                                    </option>
-                                    @endforeach
-                                </select>
-                                @error('course_id')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Curso <span style="color:var(--danger);">*</span></label>
+                        <select name="course_id"
+                                class="sst-input {{ $errors->has('course_id') ? 'error' : '' }}">
+                            <option value="">— Selecciona un curso —</option>
+                            @foreach($courses as $course)
+                            <option value="{{ $course->id }}"
+                                {{ old('course_id', $certification->course_id) == $course->id ? 'selected' : '' }}>
+                                {{ $course->name }} ({{ $course->validity_months }} meses)
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('course_id')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Instituto que certifica *
-                                </label>
-                                <input type="text" name="institute"
-                                    value="{{ old('institute', $certification->institute) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('institute')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    <div class="form-group">
+                        <label class="input-label">Instituto que certifica <span style="color:var(--danger);">*</span></label>
+                        <input type="text" name="institute"
+                               value="{{ old('institute', $certification->institute) }}"
+                               class="sst-input {{ $errors->has('institute') ? 'error' : '' }}">
+                        @error('institute')
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Fecha de emisión *
-                                </label>
-                                <input type="date" name="issue_date"
-                                    value="{{ old('issue_date', $certification->issue_date->format('Y-m-d')) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('issue_date')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Fecha de vencimiento *
-                                </label>
-                                <input type="date" name="expiry_date"
-                                    value="{{ old('expiry_date', $certification->expiry_date->format('Y-m-d')) }}"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                                @error('expiry_date')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    Observaciones
-                                </label>
-                                <textarea name="notes" rows="2"
-                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">{{ old('notes', $certification->notes) }}</textarea>
-                                @error('notes')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="input-label">Fecha de emisión <span style="color:var(--danger);">*</span></label>
+                            <input type="date" name="issue_date"
+                                   value="{{ old('issue_date', $certification->issue_date->format('Y-m-d')) }}"
+                                   class="sst-input {{ $errors->has('issue_date') ? 'error' : '' }}">
+                            @error('issue_date')
+                                <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="mt-6 flex justify-end">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                                Actualizar Certificación
-                            </button>
+                        <div class="form-group">
+                            <label class="input-label">Fecha de vencimiento <span style="color:var(--danger);">*</span></label>
+                            <input type="date" name="expiry_date"
+                                   value="{{ old('expiry_date', $certification->expiry_date->format('Y-m-d')) }}"
+                                   class="sst-input {{ $errors->has('expiry_date') ? 'error' : '' }}">
+                            @error('expiry_date')
+                                <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                            @enderror
                         </div>
-                    </form>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="input-label">Observaciones</label>
+                        <textarea name="notes" rows="2"
+                                  class="sst-input"
+                                  style="resize:vertical;">{{ old('notes', $certification->notes) }}</textarea>
+                    </div>
+
+                </div>
+                <div class="form-footer">
+                    <a href="{{ route('certifications.index') }}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-floppy-fill"></i>
+                        Actualizar certificación
+                    </button>
                 </div>
             </div>
-        </div>
+
+        </form>
     </div>
+
 </x-app-layout>

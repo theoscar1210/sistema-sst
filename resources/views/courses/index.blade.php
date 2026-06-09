@@ -19,6 +19,30 @@
             </div>
             @endif
 
+            {{-- Formulario de busqueda --}}
+
+            <form method="GET" action="{{ route('courses.index') }}" class="mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Buscar curso..."
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 col-span-2">
+
+                    <div class="flex gap-2">
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 flex-1">
+                            Buscar
+                        </button>
+                        <a href="{{ route('courses.index') }}"
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 flex-1 text-center">
+                            Limpiar
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <table class="w-full text-sm text-left">
@@ -34,7 +58,7 @@
                             @forelse($courses as $course)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 font-medium">{{ $course->name }}</td>
-                                <td class="px-4 py-3">{{ $course->validity_months }}</td>
+                                <td class=" px-4 py-3">{{ $course->validity_months }}</td>
                                 <td class="px-4 py-3 text-gray-500">{{ $course->description ?? '-' }}</td>
                                 <td class="px-4 py-3 flex gap-2">
                                     <a href="{{ route('courses.edit', $course) }}"

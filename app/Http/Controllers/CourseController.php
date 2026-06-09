@@ -11,9 +11,14 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::orderBy('name')->paginate(10);
+        $query = Course::query();
+        if ($request->filled('search')) {
+            $query->where('name', 'like', "%{$request->search}%")
+                ->orWhere('description', 'like', "%{$request->search}%");
+        }
+        $courses = $query->orderBy('name')->paginate(10)->withQueryString();
         return view('courses.index', compact('courses'));
     }
 

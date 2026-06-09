@@ -10,11 +10,33 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::orderBy('last_name')->paginate(10);
+        $query = Employee::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('document_number', 'like', "%{$search}%")
+                    ->orWhere('company', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('area')) {
+            $query->where('area', 'like', "%{$request->area}%");
+        }
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        $employees = $query->orderBy('last_name')->paginate(10)->withQueryString();
+
         return view('employees.index', compact('employees'));
     }
+
 
     /**
      * Show the form for creating a new resource.

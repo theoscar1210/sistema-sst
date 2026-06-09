@@ -21,6 +21,39 @@
             </div>
             @endif
 
+            {{-- Formulario de Busqueda --}}
+            <form method="GET" action="{{ route('employees.index') }}" class="mb-4">
+                <div class="grid grid-cols-1 md:gird-cols-4 gap-3">
+                    <input type="text"
+                        name="search"
+                        value="{{ request('serach') }}"
+                        placeholder="Nombre, documento, empresa..."
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                    <input type="text"
+                        name="area"
+                        value="{{request('area') }}"
+                        placeholder="Filtrar por área..."
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                    <select name="status"
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                        <option value="">Todos los estados</option>
+                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Activos</option>
+                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Inactivos</option>
+                    </select>
+                    <div class="flex gap-2">
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 flex-1">
+                            Buscar
+                        </button>
+                        <a href="{{ route('employees.index') }}"
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 flex-1 text-center">
+                            Limpiar
+                        </a>
+                    </div>
+                </div>
+
+            </form>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <table class="w-full text-sm text-left">

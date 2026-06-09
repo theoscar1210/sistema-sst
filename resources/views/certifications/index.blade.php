@@ -20,7 +20,48 @@
             </div>
             @endif
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            {{-- Fornulario de Busqueda --}}
+            <form method="GET" action="{{ route('certifications.index') }}" class="mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <input type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Nombre o documento del empleado..."
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+
+                    <select name="course_id"
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                        <option value="">Todos lo cursos </option>
+                        @foreach($courses as $course)
+                        <option value="{{ $course->id }}"
+                            {{ request('course_id') == $course->id ? 'selected' : '' }}>
+                            {{ $course->name }}
+                        </option>
+                        @endforeach
+                    </select>
+
+                    <select name="status"
+                        class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                        <option value="">Todos los estados</option>
+                        <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Vencidos</option>
+                        <option value="expiring" {{ request('satust') === 'expiring' ? 'selected' : '' }}>Por vencer</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : ''}}>VIgentes</option>
+                    </select>
+
+                    <div class="flex gap-2">
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 flex-1">
+                            Buscar
+                        </button>
+                        <a href="{{ route('certifications.index') }}"
+                            class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-300 flex-1 text-center">Limpiar</a>
+                    </div>
+
+
+                </div>
+            </form>
+
+            <div class=" bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <table class="w-full text-sm text-left">
                         <thead class="bg-gray-50 text-gray-600 uppercase text-xs">

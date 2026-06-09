@@ -13,13 +13,36 @@ class CertificationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $certifications = Certification::with(['employee', 'course'])
-            ->orderBy('expiry_date')
-            ->paginate(15);
+        $query = Certification::with(['employee', 'course']);
 
-        return view('certifications.index', compact('certifications'));
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('employee', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('course_id')) {
+            $query->where('course_id', $request->course_id);
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'expired') {
+                $query->whereDate('expiry_date', '<', now());
+            } elseif ($request->status === 'expiring') {
+                $query->whereDate('expiry_date', '>=', now())
+                    ->whereDate('expiry_date', '<=', now()->addDays(30));
+            } elseif ($request->status === 'active') {
+                $query->whereDate('expiry_date', '>', now()->addDays(30));
+            }
+        }
+        $courses = Course::orderBy('name')->get();
+        $certifications = $query->orderBy('expiry_date')->paginate(15)->withQueryString();
+
+        return view('certifications.index', compact('certifications', 'courses'));
     }
 
     /**

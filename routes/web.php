@@ -27,6 +27,8 @@ Route::middleware(['auth', 'role:super_admin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('employees', EmployeeController::class);
     Route::resource('courses', CourseController::class);
+    Route::get('certifications/export/excel', [CertificationController::class, 'exportExcel'])->name('certifications.export.excel');
+    Route::get('certifications/export/pdf', [CertificationController::class, 'exportPdf'])->name('certifications.export.pdf');
     Route::resource('certifications', CertificationController::class);
 });
 

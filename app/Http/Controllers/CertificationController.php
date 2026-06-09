@@ -7,6 +7,9 @@ use App\Models\Certification;
 use App\Models\Course;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Exports\CertificationsExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificationController extends Controller
 {
@@ -118,5 +121,22 @@ class CertificationController extends Controller
     {
         $certification->delete();
         return redirect()->route('certifications.index')->with('success', 'Certificación eliminada exitosamente.');
+    }
+
+    public function exportExcel()
+    {
+        return Excel::download(new CertificationsExport(), 'certificaciones_' . now()->format('Y-m-d') . '.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        $certifications = Certification::with(['employee', 'course'])
+            ->orderBy('expiry_date')
+            ->get();
+
+        $pdf = Pdf::loadView('certifications.pdf', compact('certifications'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('certificaciones_' . now()->format('Y-m-d') . '.pdf');
     }
 }

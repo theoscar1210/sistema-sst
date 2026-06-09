@@ -4,10 +4,20 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Certificaciones
             </h2>
-            <a href="{{ route('certifications.create') }}"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                + Nueva Certificación
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('certifications.export.excel') }}"
+                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
+                    Exportar Excel
+                </a>
+                <a href="{{ route('certifications.export.pdf') }}"
+                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">
+                    Exportar PDF
+                </a>
+                <a href="{{ route('certifications.create') }}"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                    + Nueva Certificación
+                </a>
+            </div>
         </div>
     </x-slot>
 

@@ -7,6 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CertificationController;
+use App\Http\Controllers\ActivityLogController;
+
+
 
 
 Route::get('/', function () {
@@ -21,7 +24,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 
 Route::middleware(['auth', 'role:super_admin'])->group(function () {
     Route::resource('users', UserController::class);
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])
+        ->name('activity_logs.index');
 });
+
 
 //rutas para super_admin y sst
 Route::middleware(['auth'])->group(function () {

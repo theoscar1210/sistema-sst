@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Services\ActivityLogService;
 
 class EmployeeController extends Controller
 {
@@ -62,7 +63,13 @@ class EmployeeController extends Controller
             'email' => 'nullable|email|max:100',
         ]);
 
-        Employee::create($request->all());
+        $employee = Employee::create($request->all());
+
+        ActivityLogService::log(
+            'created',
+            $employee,
+            "Registró el empleado: {$employee->full_name}"
+        );
 
         return redirect()->route('employees.index')
             ->with('success', 'Empleado registrado correctamente.');
@@ -103,6 +110,12 @@ class EmployeeController extends Controller
 
         $employee->update($request->all());
 
+        ActivityLogService::log(
+            'updated',
+            $employee,
+            "Actualizó el empleado: {$employee->full_name}"
+        );
+
         return redirect()->route('employees.index')
             ->with('success', 'Empleado actualizado correctamente.');
     }
@@ -112,6 +125,12 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
+        ActivityLogService::log(
+            'deleted',
+            $employee,
+            "Eliminó el empleado: {$employee->full_name}"
+        );
+
 
         $employee->delete();
         return redirect()->route('employees.index')

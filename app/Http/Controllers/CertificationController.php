@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Exports\CertificationsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\ActivityLogService;
 
 class CertificationController extends Controller
 {
@@ -53,7 +54,7 @@ class CertificationController extends Controller
      */
     public function create()
     {
-        $employees = Employee::where('is_active', true)->orderBY('last_name')->get();
+        $employees = Employee::where('is_active', true)->orderBy('last_name')->get();
         $courses = Course::orderBy('name')->get();
         return view('certifications.create', compact('employees', 'courses'));
     }
@@ -69,11 +70,17 @@ class CertificationController extends Controller
             'institute' => 'required|max:150',
             'issue_date' => 'required|date',
             'expiry_date' => 'required|date|after:issue_date',
-            'certificate_file' => 'nullable|max255',
+            'certificate_file' => 'nullable|max:255',
             'notes' => 'nullable|max:500',
         ]);
 
-        Certification::create($request->all());
+        $certification = Certification::create($request->all());
+
+        ActivityLogService::log(
+            'created',
+            $certification,
+            "Registró certificación: {$certification->employee->full_name} — {$certification->course->name}"
+        );
         return redirect()->route('certifications.index')->with('success', 'Certificación creada exitosamente.');
     }
 
@@ -111,6 +118,11 @@ class CertificationController extends Controller
         ]);
 
         $certification->update($request->all());
+        ActivityLogService::log(
+            'updated',
+            $certification,
+            "Actualizó certificación: {$certification->employee->full_name} — {$certification->course->name}"
+        );
         return redirect()->route('certifications.index')->with('success', 'Certificación actualizada exitosamente.');
     }
 
@@ -119,6 +131,11 @@ class CertificationController extends Controller
      */
     public function destroy(Certification $certification)
     {
+        ActivityLogService::log(
+            'deleted',
+            $certification,
+            "Eliminó certificación: {$certification->employee->full_name} — {$certification->course->name}"
+        );
         $certification->delete();
         return redirect()->route('certifications.index')->with('success', 'Certificación eliminada exitosamente.');
     }

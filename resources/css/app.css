@@ -1278,3 +1278,214 @@
   }
 
 } /* end @layer components */
+
+
+/* ================================================================
+   TOM SELECT — Override para Design System SST
+   Reemplaza el tema Bootstrap 5 con nuestra paleta y tipografía
+   ================================================================ */
+
+/* Wrapper externo — sin margen extra */
+.ts-wrapper {
+  position: relative;
+}
+
+.ts-wrapper.single .ts-control,
+.ts-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 36px;
+  padding: 6px 36px 6px 11px;    /* hueco derecha para la flecha */
+  font-size: 13.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.4;
+  color: #0F172A;
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%2394A3B8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Hover */
+.ts-wrapper:not(.focus):hover .ts-control {
+  border-color: #CBD5E1;
+}
+
+/* Focus */
+.ts-wrapper.focus .ts-control {
+  border-color: #4A55E8 !important;
+  box-shadow: 0 0 0 3px rgba(74, 85, 232, 0.14) !important;
+}
+
+/* Estado error */
+.ts-wrapper.error .ts-control,
+.sst-input.error + .ts-wrapper .ts-control {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* Deshabilitado */
+.ts-wrapper.disabled .ts-control {
+  background: #F1F5F9;
+  color: #CBD5E1;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Ocultar flecha nativa del select original */
+.ts-hidden-accessible {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+
+/* Input de búsqueda dentro del control */
+.ts-control input {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  font-size: 13.5px !important;
+  font-family: inherit !important;
+  color: #0F172A !important;
+  min-width: 80px;
+  flex: 1;
+}
+
+.ts-control input::placeholder {
+  color: #94A3B8;
+}
+
+/* Item seleccionado (single mode — muestra como texto plano) */
+.ts-wrapper.single .ts-control .ts-input {
+  display: none;
+}
+
+/* — DROPDOWN — */
+.ts-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+  overflow: hidden;
+  font-size: 13.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Scroll en contenido del dropdown */
+.ts-dropdown-content {
+  max-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+
+.ts-dropdown-content::-webkit-scrollbar       { width: 4px; }
+.ts-dropdown-content::-webkit-scrollbar-track { background: transparent; }
+.ts-dropdown-content::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
+
+/* — OPCIONES — */
+.ts-option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #0F172A;
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hover / tecla flecha */
+.ts-option.active:not(.selected) {
+  background: #EEF3FF;
+  color: #3A3FC8;
+}
+
+/* Ya seleccionada */
+.ts-option.selected {
+  background: #E0EAFF;
+  color: #4A55E8;
+  font-weight: 500;
+}
+
+.ts-option.selected::after {
+  content: '\F26E';           /* bi-check-lg */
+  font-family: 'bootstrap-icons';
+  font-size: 13px;
+  margin-left: auto;
+  color: #4A55E8;
+  flex-shrink: 0;
+}
+
+/* Opción activa + seleccionada */
+.ts-option.active.selected {
+  background: #C8D7FE;
+  color: #3135A3;
+}
+
+/* Sin resultados */
+.ts-no-results {
+  padding: 16px 12px;
+  text-align: center;
+  color: #94A3B8;
+  font-size: 13px;
+}
+
+/* Separador de grupo */
+.ts-optgroup-header {
+  padding: 8px 12px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94A3B8;
+}
+
+/* Cabecera del dropdown (buscador integrado) */
+.ts-dropdown-header {
+  padding: 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+/* Caret / flecha (usamos bg-image en .ts-control, no el elemento SVG) */
+.ts-wrapper .ts-control:after { display: none; }
+
+/* Loading spinner */
+.ts-wrapper.loading .ts-control::after {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #E2E8F0;
+  border-top-color: #4A55E8;
+  border-radius: 50%;
+  animation: ts-spin 0.6s linear infinite;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+@keyframes ts-spin {
+  to { transform: rotate(360deg); }
+}

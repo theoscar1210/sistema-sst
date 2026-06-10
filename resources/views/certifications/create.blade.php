@@ -29,8 +29,8 @@
 
                     <div class="form-group">
                         <label class="input-label">Empleado <span style="color:var(--danger);">*</span></label>
-                        <select name="employee_id"
-                                class="sst-input {{ $errors->has('employee_id') ? 'error' : '' }}">
+                        <select name="employee_id" id="employee_select"
+                            class="sst-input {{ $errors->has('employee_id') ? 'error' : '' }}">
                             <option value="">— Selecciona un empleado —</option>
                             @foreach($employees as $employee)
                             <option value="{{ $employee->id }}"
@@ -40,14 +40,14 @@
                             @endforeach
                         </select>
                         @error('employee_id')
-                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-group">
                         <label class="input-label">Curso <span style="color:var(--danger);">*</span></label>
                         <select name="course_id"
-                                class="sst-input {{ $errors->has('course_id') ? 'error' : '' }}">
+                            class="sst-input {{ $errors->has('course_id') ? 'error' : '' }}">
                             <option value="">— Selecciona un curso —</option>
                             @foreach($courses as $course)
                             <option value="{{ $course->id }}"
@@ -57,18 +57,18 @@
                             @endforeach
                         </select>
                         @error('course_id')
-                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="form-group">
                         <label class="input-label">Instituto que certifica <span style="color:var(--danger);">*</span></label>
                         <input type="text" name="institute"
-                               value="{{ old('institute') }}"
-                               placeholder="Nombre de la entidad certificadora"
-                               class="sst-input {{ $errors->has('institute') ? 'error' : '' }}">
+                            value="{{ old('institute') }}"
+                            placeholder="Nombre de la entidad certificadora"
+                            class="sst-input {{ $errors->has('institute') ? 'error' : '' }}">
                         @error('institute')
-                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                        <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -76,20 +76,20 @@
                         <div class="form-group">
                             <label class="input-label">Fecha de emisión <span style="color:var(--danger);">*</span></label>
                             <input type="date" name="issue_date"
-                                   value="{{ old('issue_date') }}"
-                                   class="sst-input {{ $errors->has('issue_date') ? 'error' : '' }}">
+                                value="{{ old('issue_date') }}"
+                                class="sst-input {{ $errors->has('issue_date') ? 'error' : '' }}">
                             @error('issue_date')
-                                <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
                             <label class="input-label">Fecha de vencimiento <span style="color:var(--danger);">*</span></label>
                             <input type="date" name="expiry_date"
-                                   value="{{ old('expiry_date') }}"
-                                   class="sst-input {{ $errors->has('expiry_date') ? 'error' : '' }}">
+                                value="{{ old('expiry_date') }}"
+                                class="sst-input {{ $errors->has('expiry_date') ? 'error' : '' }}">
                             @error('expiry_date')
-                                <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
+                            <div class="input-error"><i class="bi bi-exclamation-circle"></i>{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
@@ -97,9 +97,9 @@
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="input-label">Observaciones</label>
                         <textarea name="notes" rows="2"
-                                  placeholder="Notas adicionales sobre la certificación..."
-                                  class="sst-input"
-                                  style="resize:vertical;">{{ old('notes') }}</textarea>
+                            placeholder="Notas adicionales sobre la certificación..."
+                            class="sst-input"
+                            style="resize:vertical;">{{ old('notes') }}</textarea>
                     </div>
 
                 </div>
@@ -114,5 +114,15 @@
 
         </form>
     </div>
+
+
+    <script>
+        new TomSelect('#employee_select', {
+            placeholder: 'Escribe para buscar empleado...',
+            searchField: ['text'],
+            maxOptions: 50,
+        });
+    </script>
+
 
 </x-app-layout>

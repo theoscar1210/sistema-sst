@@ -10,14 +10,14 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <a href="{{ route('certifications.export.excel') }}"
-               class="btn btn-secondary btn-sm"
-               data-tooltip="Exportar a Excel">
+                class="btn btn-secondary btn-sm"
+                data-tooltip="Exportar a Excel">
                 <i class="bi bi-file-earmark-excel" style="color:#16A34A;"></i>
                 Excel
             </a>
             <a href="{{ route('certifications.export.pdf') }}"
-               class="btn btn-secondary btn-sm"
-               data-tooltip="Exportar a PDF">
+                class="btn btn-secondary btn-sm"
+                data-tooltip="Exportar a PDF">
                 <i class="bi bi-file-earmark-pdf" style="color:#DC2626;"></i>
                 PDF
             </a>
@@ -30,7 +30,7 @@
 
     @if(session('success'))
     <div class="sst-alert sst-alert-success" style="margin-bottom:20px;"
-         x-data x-init="setTimeout(() => $el.style.display='none', 4000)">
+        x-data x-init="setTimeout(() => $el.style.display='none', 4000)">
         <i class="bi bi-check-circle-fill"></i>
         {{ session('success') }}
     </div>
@@ -45,8 +45,7 @@
                 name="search"
                 value="{{ request('search') }}"
                 placeholder="Nombre o documento del empleado..."
-                class="sst-input"
-            >
+                class="sst-input">
         </div>
         <select name="course_id" class="sst-input" style="min-width:160px;max-width:220px;flex:1;">
             <option value="">Todos los cursos</option>
@@ -58,9 +57,9 @@
         </select>
         <select name="status" class="sst-input" style="min-width:140px;max-width:180px;flex:1;">
             <option value="">Todos los estados</option>
-            <option value="expired"  {{ request('status') === 'expired'  ? 'selected' : '' }}>Vencidos</option>
+            <option value="expired" {{ request('status') === 'expired'  ? 'selected' : '' }}>Vencidos</option>
             <option value="expiring" {{ request('status') === 'expiring' ? 'selected' : '' }}>Por vencer</option>
-            <option value="active"   {{ request('status') === 'active'   ? 'selected' : '' }}>Vigentes</option>
+            <option value="active" {{ request('status') === 'active'   ? 'selected' : '' }}>Vigentes</option>
         </select>
         <div style="display:flex;gap:8px;">
             <button type="submit" class="btn btn-primary btn-sm">
@@ -105,7 +104,7 @@
             </thead>
             <tbody>
                 @forelse($certifications as $certification)
-                @php $daysLeft = now()->diffInDays($certification->expiry_date, false); @endphp
+                @php $daysLeft = (int) now()->diffInDays($certification->expiry_date, false); @endphp
                 <tr>
                     <td>
                         <div style="display:flex;align-items:center;gap:10px;">
@@ -130,29 +129,29 @@
                     <td>
                         @if($daysLeft < 0)
                             <span class="badge badge-expired"><span class="dot"></span>Vencido</span>
-                        @elseif($daysLeft <= 30)
-                            <span class="badge badge-expiring"><span class="dot"></span>{{ $daysLeft }}d</span>
-                        @else
-                            <span class="badge badge-vigente"><span class="dot"></span>Vigente</span>
-                        @endif
+                            @elseif($daysLeft <= 30)
+                                <span class="badge badge-expiring"><span class="dot"></span>{{ $daysLeft }}d</span>
+                                @else
+                                <span class="badge badge-vigente"><span class="dot"></span>Vigente</span>
+                                @endif
                     </td>
                     <td>
                         <div class="td-actions">
                             <a href="{{ route('certifications.edit', $certification) }}"
-                               class="btn btn-ghost btn-xs"
-                               data-tooltip="Editar">
+                                class="btn btn-ghost btn-xs"
+                                data-tooltip="Editar">
                                 <i class="bi bi-pencil"></i>
                                 Editar
                             </a>
                             <form action="{{ route('certifications.destroy', $certification) }}"
-                                  method="POST"
-                                  onsubmit="return confirm('¿Eliminar esta certificación?')">
+                                method="POST"
+                                onsubmit="return confirm('¿Eliminar esta certificación?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                        class="btn btn-ghost btn-xs"
-                                        style="color:var(--danger);"
-                                        data-tooltip="Eliminar">
+                                    class="btn btn-ghost btn-xs"
+                                    style="color:var(--danger);"
+                                    data-tooltip="Eliminar">
                                     <i class="bi bi-trash3"></i>
                                 </button>
                             </form>
@@ -166,14 +165,14 @@
                             <i class="bi bi-award"></i>
                             <p>No se encontraron certificaciones.</p>
                             @if(request()->hasAny(['search','course_id','status']))
-                                <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm" style="margin-top:12px;">
-                                    Limpiar filtros
-                                </a>
+                            <a href="{{ route('certifications.index') }}" class="btn btn-secondary btn-sm" style="margin-top:12px;">
+                                Limpiar filtros
+                            </a>
                             @else
-                                <a href="{{ route('certifications.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;">
-                                    <i class="bi bi-plus-lg"></i>
-                                    Nueva certificación
-                                </a>
+                            <a href="{{ route('certifications.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;">
+                                <i class="bi bi-plus-lg"></i>
+                                Nueva certificación
+                            </a>
                             @endif
                         </div>
                     </td>

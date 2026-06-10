@@ -113,7 +113,7 @@ class CertificationController extends Controller
             'institute' => 'required|max:150',
             'issue_date' => 'required|date',
             'expiry_date' => 'required|date|after:issue_date',
-            'certificate_file' => 'nullable|max255',
+            'certificate_file' => 'nullable|max:255',
             'notes' => 'nullable|max:500',
         ]);
 

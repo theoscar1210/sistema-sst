@@ -63,9 +63,18 @@ class EmployeeController extends Controller
             'email' => 'nullable|email|max:100',
         ]);
 
-        $employee = Employee::create($request->all());
+        $employee = Employee::create($request->only([
+            'document_number',
+            'name',
+            'last_name',
+            'area',
+            'position',
+            'company',
+            'phone',
+            'email',
+        ]));
 
-        ActivityLogService::log(
+        ActivityLogService::log(        // ← agregar esto
             'created',
             $employee,
             "Registró el empleado: {$employee->full_name}"
@@ -99,21 +108,56 @@ class EmployeeController extends Controller
 
         $request->validate([
             'document_number' => 'required|max:20|unique:employees,document_number,' . $employee->id,
-            'name' => 'required|max:100',
-            'last_name' => 'required|max:100',
-            'area' => 'required|max:100',
-            'position' => 'required|max:100',
-            'company' => 'required|max:100',
-            'phone' => 'nullable|max:20',
-            'email' => 'nullable|email|max:100',
+            'name'            => 'required|max:100',
+            'last_name'       => 'required|max:100',
+            'area'            => 'required|max:100',
+            'position'        => 'required|max:100',
+            'company'         => 'required|max:100',
+            'phone'           => 'nullable|max:20',
+            'email'           => 'nullable|email|max:100',
         ]);
 
-        $employee->update($request->all());
+        $before = $employee->only([
+            'document_number',
+            'name',
+            'last_name',
+            'area',
+            'position',
+            'company',
+            'phone',
+            'email',
+            'is_active'
+        ]);
+
+        $employee->update($request->only([
+            'document_number',
+            'name',
+            'last_name',
+            'area',
+            'position',
+            'company',
+            'phone',
+            'email',
+            'is_active',
+        ]));
+
+        $after = $employee->only([
+            'document_number',
+            'name',
+            'last_name',
+            'area',
+            'position',
+            'company',
+            'phone',
+            'email',
+            'is_active'
+        ]);
 
         ActivityLogService::log(
             'updated',
             $employee,
-            "Actualizó el empleado: {$employee->full_name}"
+            "Actualizó el empleado: {$employee->full_name}",
+            ['before' => $before, 'after' => $after]
         );
 
         return redirect()->route('employees.index')

@@ -79,7 +79,7 @@
         <tbody>
             @foreach($certifications as $cert)
             @php
-            $daysLeft = now()->diffInDays($cert->expiry_date, false);
+            $daysLeft = (int) now()->diffInDays($cert->expiry_date, false);
             if ($daysLeft < 0) {
                 $statusClass='vencido' ;
                 $statusText='Vencido' ;

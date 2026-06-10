@@ -27,7 +27,7 @@
             <strong>Atención crítica:</strong>
             {{ $expired }} certificación{{ $expired !== 1 ? 'es' : '' }} ha{{ $expired !== 1 ? 'n' : '' }} vencido.
             <a href="{{ route('certifications.index') }}?status=expired"
-               style="font-weight:600;text-decoration:underline;margin-left:6px;">
+                style="font-weight:600;text-decoration:underline;margin-left:6px;">
                 Ver ahora →
             </a>
         </div>
@@ -42,7 +42,7 @@
             {{ $expiringSoon }} certificación{{ $expiringSoon !== 1 ? 'es' : '' }}
             vence{{ $expiringSoon !== 1 ? 'n' : '' }} en los próximos 30 días.
             <a href="{{ route('certifications.index') }}?status=expiring"
-               style="font-weight:600;text-decoration:underline;margin-left:6px;">
+                style="font-weight:600;text-decoration:underline;margin-left:6px;">
                 Revisar →
             </a>
         </div>
@@ -104,15 +104,15 @@
                 <div class="kpi-value" style="color:#991B1B;">{{ $expired }}</div>
                 <div class="kpi-label">Certificaciones vencidas</div>
                 @if($expired > 0)
-                    <a href="{{ route('certifications.index') }}?status=expired" class="kpi-trend down">
-                        <i class="bi bi-arrow-right" style="font-size:10px;"></i>
-                        Atender ahora
-                    </a>
+                <a href="{{ route('certifications.index') }}?status=expired" class="kpi-trend down">
+                    <i class="bi bi-arrow-right" style="font-size:10px;"></i>
+                    Atender ahora
+                </a>
                 @else
-                    <span class="kpi-trend up">
-                        <i class="bi bi-check-circle-fill" style="font-size:10px;"></i>
-                        Sin vencidas
-                    </span>
+                <span class="kpi-trend up">
+                    <i class="bi bi-check-circle-fill" style="font-size:10px;"></i>
+                    Sin vencidas
+                </span>
                 @endif
             </div>
         </div>
@@ -161,7 +161,7 @@
                 </thead>
                 <tbody>
                     @foreach($recentExpiring as $cert)
-                    @php $daysLeft = now()->diffInDays($cert->expiry_date, false); @endphp
+                    @php $daysLeft = (int) now()->diffInDays($cert->expiry_date, false); @endphp
                     <tr>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
@@ -176,9 +176,9 @@
                         <td>
                             @if($daysLeft <= 7)
                                 <span class="badge badge-expired"><span class="dot"></span>{{ $daysLeft }}d</span>
-                            @else
+                                @else
                                 <span class="badge badge-expiring"><span class="dot"></span>{{ $daysLeft }}d</span>
-                            @endif
+                                @endif
                         </td>
                     </tr>
                     @endforeach
@@ -198,9 +198,9 @@
                 <div style="display:flex;flex-direction:column;gap:8px;">
 
                     <a href="{{ route('employees.create') }}"
-                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
-                       onmouseover="this.style.background='var(--bg-surface2)'"
-                       onmouseout="this.style.background='transparent'">
+                        style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                        onmouseover="this.style.background='var(--bg-surface2)'"
+                        onmouseout="this.style.background='transparent'">
                         <div style="width:36px;height:36px;border-radius:var(--r-md);background:#EEF3FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="bi bi-person-plus-fill" style="color:#4A55E8;font-size:15px;"></i>
                         </div>
@@ -212,9 +212,9 @@
                     </a>
 
                     <a href="{{ route('certifications.create') }}"
-                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
-                       onmouseover="this.style.background='var(--bg-surface2)'"
-                       onmouseout="this.style.background='transparent'">
+                        style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                        onmouseover="this.style.background='var(--bg-surface2)'"
+                        onmouseout="this.style.background='transparent'">
                         <div style="width:36px;height:36px;border-radius:var(--r-md);background:#ECFDF5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="bi bi-award-fill" style="color:#10B981;font-size:15px;"></i>
                         </div>
@@ -226,9 +226,9 @@
                     </a>
 
                     <a href="{{ route('courses.create') }}"
-                       style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
-                       onmouseover="this.style.background='var(--bg-surface2)'"
-                       onmouseout="this.style.background='transparent'">
+                        style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-lg);border:1px solid var(--border);text-decoration:none;transition:all 0.15s;"
+                        onmouseover="this.style.background='var(--bg-surface2)'"
+                        onmouseout="this.style.background='transparent'">
                         <div style="width:36px;height:36px;border-radius:var(--r-md);background:#FFF7ED;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="bi bi-book-fill" style="color:#F97316;font-size:15px;"></i>
                         </div>
@@ -248,9 +248,9 @@
                     Estado del sistema
                 </div>
                 @php
-                    $total = max($totalEmployees, 1);
-                    $pct   = $active > 0 ? min(round(($active / max($active + $expiringSoon + $expired, 1)) * 100), 100) : 0;
-                    $barColor = $pct > 80 ? 'var(--success)' : ($pct > 50 ? 'var(--warning)' : 'var(--danger)');
+                $total = max($totalEmployees, 1);
+                $pct = $active > 0 ? min(round(($active / max($active + $expiringSoon + $expired, 1)) * 100), 100) : 0;
+                $barColor = $pct > 80 ? 'var(--success)' : ($pct > 50 ? 'var(--warning)' : 'var(--danger)');
                 @endphp
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
                     <span style="font-size:12.5px;color:var(--text-secondary);">Certificaciones vigentes</span>

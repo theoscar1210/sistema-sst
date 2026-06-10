@@ -57,6 +57,19 @@
                 {{ $slot }}
             </main>
 
+            {{-- Footer --}}
+            <footer class="sst-footer">
+                <span>
+                    &copy; {{ date('Y') }} Desarrollado por <strong>Oscar Dev</strong>
+                    &nbsp;&middot;&nbsp;
+                    <a href="https://github.com/theoscar1210" target="_blank" rel="noopener">
+                        <i class="bi bi-github"></i> GitHub
+                    </a>
+                    &nbsp;&middot;&nbsp;
+                    <a href="mailto:oscardfer2020@gmail.com">oscardfer2020@gmail.com</a>
+                </span>
+            </footer>
+
         </div>
 
     </div>
